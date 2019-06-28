@@ -6,6 +6,7 @@ public class CoffeeShop {
     public static void main(String[] args) {
         LinkedHashMap<Integer,Integer> order=new LinkedHashMap<>();
         LinkedHashMap<Integer,String> menu=new LinkedHashMap<>();
+        LinkedHashMap<Integer,Integer> rate=new LinkedHashMap<>();
         String name;
         int flag=1;
         menu.put(1,"Cold Coffee");
@@ -13,6 +14,11 @@ public class CoffeeShop {
         menu.put(3,"Mocha");
         menu.put(4,"Expresso");
         menu.put(5,"Capacuino");
+        rate.put(1,50);
+        rate.put(2,50);
+        rate.put(3,100);
+        rate.put(4,150);
+        rate.put(5,170);
         Scanner sc=new Scanner(System.in);
         CoffeeShop shop=new CoffeeShop();
         System.out.println("---------------Menu---------------");
@@ -27,8 +33,7 @@ public class CoffeeShop {
         System.out.println("Enter the user Name");
         name=sc.nextLine();
         System.out.println("--------------Order---------------");
-        System.out.println("Enter your order And Enter '0' for exit");
-       // System.out.println("Enter the cofee code and quantity seprated by , and two coffees seprated by !");
+        System.out.println("Enter your order As Coffee and Quantity is ',' Seprated And Enter '0' for exit");
         while(flag==1) {
             String ord = sc.nextLine();
             if(ord.equals("0"))
@@ -46,7 +51,7 @@ public class CoffeeShop {
         int dst=sc.nextInt();
         System.out.println("-----------"+name+" Your Bill Is------------");
         System.out.println("\tCoffee\t\tQuantity\tPrice");
-        shop.printBill(order,dst);
+        shop.printBill(order,dst,rate,menu);
     }
 
     public String validateOrder(String ord,LinkedHashMap<Integer,String> menu) {
@@ -80,23 +85,30 @@ public class CoffeeShop {
                    }
                }
                String str=shop.predictor(s[0],menu);
-               System.out.println("Do you want to order "+str+" (yes/no)");
-               String str2=sc.nextLine();
-               if(str2.equals("yes"))
-               {
-                   String str3=str+","+s[1];
-                   System.out.println(str3);
-                   return str3;
+               if(str!=null) {
+                   System.out.println("Do you want to order " + str + " (yes/no)");
+                   String str2 = sc.nextLine();
+                   if (str2.equals("yes")) {
+                       String str3 = str + "," + s[1];
+                       System.out.println(str3);
+                       return str3;
+                   } else {
+                       System.out.println("Please Enter Proper Name");
+                       return null;
+                   }
                }
-               else {
+               else
+               {
                    System.out.println("Please Enter Proper Name");
                    return null;
                }
+
+
         }
         return ord;
     }
 
-    public void printBill(LinkedHashMap<Integer, Integer> order,int dst) {
+    public void printBill(LinkedHashMap<Integer, Integer> order, int dst, LinkedHashMap<Integer, Integer> rate, LinkedHashMap<Integer, String> menu) {
         Set se=order.entrySet();
         i=se.iterator();
         int total_Price=0;
@@ -105,7 +117,11 @@ public class CoffeeShop {
         {
             Map.Entry me=(Map.Entry) i.next();
             int type=(Integer)me.getKey();
-            switch (type)
+            int price=(Integer)rate.get(type);
+            System.out.println(c+"."+menu.get(type)+"\t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*price);
+            total_Price=(Integer)me.getValue()*price+total_Price;
+            c++;
+           /* switch (type)
             {
                 case 1:System.out.println(c+".Cold Coffee\t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*50);
                        total_Price=(Integer)me.getValue()*50+total_Price;
@@ -127,7 +143,7 @@ public class CoffeeShop {
                        total_Price=(Integer)me.getValue()*170+total_Price;
                        c++;
                        break;
-            }
+            }*/
 
         }
         System.out.println("-------------------------------------------");
@@ -220,7 +236,7 @@ public class CoffeeShop {
            {
                for(int k=0;k<s.length();k++)
                {
-                   if(str.charAt(k)==s.charAt(k))
+                   if(Character.toLowerCase(str.charAt(k))==s.charAt(k) || Character.toUpperCase(str.charAt(k))==s.charAt(k))
                        count[c]++;
                }
                c++;
@@ -229,30 +245,41 @@ public class CoffeeShop {
            {
                for(int k=0;k<str.length();k++)
                {
-                   if(str.charAt(k)==s.charAt(k))
+
+                   if(Character.toLowerCase(str.charAt(k))==s.charAt(k) || Character.toUpperCase(str.charAt(k))==s.charAt(k))
                        count[c]++;
                }
                c++;
            }
        }
-       int max=count[0];
-        for(int k=1;k<5;k++)
-        {
-            if(max<count[k]) {
-                max = count[k];
-                key=k+1;
-            }
-        }
-        Iterator m=se.iterator();
-        while(m.hasNext())
-        {
-            Map.Entry me=(Map.Entry) m.next();
-            int km=(Integer)me.getKey();
-            if(km==key)
-            {
-                str2=(String) me.getValue();
-            }
-        }
+       int co=0;
+       int j;
+       for(j=0;j<5;j++)
+       {
+           if(count[j]==0)
+               co++;
+       }
+       if(j==co)
+       {
+           return null;
+       }
+       else {
+           int max = count[0];
+           for (int k = 1; k < 5; k++) {
+               if (max < count[k]) {
+                   max = count[k];
+                   key = k + 1;
+               }
+           }
+           Iterator m = se.iterator();
+           while (m.hasNext()) {
+               Map.Entry me = (Map.Entry) m.next();
+               int km = (Integer) me.getKey();
+               if (km == key) {
+                   str2 = (String) me.getValue();
+               }
+           }
+       }
       return str2;
    }
 }
