@@ -121,29 +121,6 @@ public class CoffeeShop {
             System.out.println(c+"."+menu.get(type)+"\t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*price);
             total_Price=(Integer)me.getValue()*price+total_Price;
             c++;
-           /* switch (type)
-            {
-                case 1:System.out.println(c+".Cold Coffee\t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*50);
-                       total_Price=(Integer)me.getValue()*50+total_Price;
-                       c++;
-                       break;
-                case 2:System.out.println(c+".Hot Coffee\t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*50);
-                       total_Price=(Integer)me.getValue()*50+total_Price;
-                       c++;
-                       break;
-                case 3:System.out.println(c+".Mocha      \t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*100);
-                       total_Price=(Integer)me.getValue()*100+total_Price;
-                       c++;
-                       break;
-                case 4:System.out.println(c+".Expresso   \t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*150);
-                       total_Price=(Integer)me.getValue()*150+total_Price;
-                       c++;
-                       break;
-                case 5:System.out.println(c+".Capacuino   \t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*170);
-                       total_Price=(Integer)me.getValue()*170+total_Price;
-                       c++;
-                       break;
-            }*/
 
         }
         System.out.println("-------------------------------------------");
