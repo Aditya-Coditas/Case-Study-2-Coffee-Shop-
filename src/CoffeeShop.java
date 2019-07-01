@@ -1,5 +1,4 @@
 import java.util.*;
-
 public class CoffeeShop {
     Iterator i;
     Scanner sc=new Scanner(System.in);
@@ -8,12 +7,11 @@ public class CoffeeShop {
         LinkedHashMap<Integer,String> menu=new LinkedHashMap<>();
         LinkedHashMap<Integer,Integer> rate=new LinkedHashMap<>();
         String name;
-        int flag=1;
         menu.put(1,"Cold Coffee");
-        menu.put(2,"Hot Coffee");
-        menu.put(3,"Mocha");
-        menu.put(4,"Expresso");
-        menu.put(5,"Capacuino");
+        menu.put(2,"Hot Coffee ");
+        menu.put(3,"Mocha      ");
+        menu.put(4,"Expresso   ");
+        menu.put(5,"Capacuino  ");
         rate.put(1,50);
         rate.put(2,50);
         rate.put(3,100);
@@ -33,29 +31,18 @@ public class CoffeeShop {
         System.out.println("Enter the user Name");
         name=sc.nextLine();
         System.out.println("--------------Order---------------");
-        System.out.println("Enter your order As Coffee and Quantity is ',' Seprated And Enter '0' for exit");
-        while(flag==1) {
-            String ord = sc.nextLine();
-            if(ord.equals("0"))
-            {
-                flag=1;
-                break;
-            }
-            String str=shop.validateOrder(ord,menu);
-             if(str!=null) {
-                 ord=str;
-                 shop.getOrder(ord, order,menu);
-             }
+        System.out.println("Enter Your Order  :  ");
+        String ord=sc.nextLine();
+        if(shop.getOrder(ord,order,menu)) {
+            System.out.println("Enter discount %");
+            int dst = sc.nextInt();
+            System.out.println("-----------" + name + " Your Bill Is------------");
+            System.out.println("\tCoffee\t\tQuantity\tPrice");
+            shop.printBill(order, dst, rate, menu);
         }
-        System.out.println("Enter discount %");
-        int dst=sc.nextInt();
-        System.out.println("-----------"+name+" Your Bill Is------------");
-        System.out.println("\tCoffee\t\tQuantity\tPrice");
-        shop.printBill(order,dst,rate,menu);
     }
-
-    public String validateOrder(String ord,LinkedHashMap<Integer,String> menu) {
-        String s[]=ord.split(",");
+    public String validateOrder(String order,String ord,LinkedHashMap<Integer,String> menu) {
+        String s[]=ord.split(":");
         CoffeeShop shop=new CoffeeShop();
         int s2=Integer.parseInt(s[1]);
         if(s[0].matches(".*\\d.*")) {
@@ -81,7 +68,7 @@ public class CoffeeShop {
                    Map.Entry me=(Map.Entry) i.next();
                    if(me.getValue().equals(s[0]))
                    {
-                       return ord;
+                       return order;
                    }
                }
                String str=shop.predictor(s[0],menu);
@@ -89,23 +76,23 @@ public class CoffeeShop {
                    System.out.println("Do you want to order " + str + " (yes/no)");
                    String str2 = sc.nextLine();
                    if (str2.equals("yes")) {
-                       String str3 = str + "," + s[1];
+                       String str3 = str + ":" + s[1];
                        System.out.println(str3);
-                       return str3;
+
+                       String replace=order.replace(ord,str3);
+                       System.out.println(replace);
+                       return replace;
                    } else {
-                       System.out.println("Please Enter Proper Name");
+                       System.out.println("Invalid Menu Name\nPlease Enter Proper Name");
                        return null;
                    }
                }
-               else
-               {
+               else {
                    System.out.println("Please Enter Proper Name");
                    return null;
                }
-
-
         }
-        return ord;
+        return order;
     }
 
     public void printBill(LinkedHashMap<Integer, Integer> order, int dst, LinkedHashMap<Integer, Integer> rate, LinkedHashMap<Integer, String> menu) {
@@ -117,11 +104,10 @@ public class CoffeeShop {
         {
             Map.Entry me=(Map.Entry) i.next();
             int type=(Integer)me.getKey();
-            int price=(Integer)rate.get(type);
+            int price=rate.get(type);
             System.out.println(c+"."+menu.get(type)+"\t\t"+me.getValue()+"\t\t"+(Integer)me.getValue()*price);
             total_Price=(Integer)me.getValue()*price+total_Price;
             c++;
-
         }
         System.out.println("-------------------------------------------");
         System.out.println("Total Price    \t\t\t\t"+total_Price);
@@ -133,34 +119,46 @@ public class CoffeeShop {
 
     }
 
-    public void getOrder(String ord, LinkedHashMap<Integer, Integer> order, LinkedHashMap<Integer, String> menu) {
-        CoffeeShop shop=new CoffeeShop();
-        String o[]=ord.split(",");
-        if(shop.checkOrder((String)o[0],(String)o[1],order,menu))
+    public boolean getOrder(String ord, LinkedHashMap<Integer, Integer> order, LinkedHashMap<Integer, String> menu) {
+        CoffeeShop shop = new CoffeeShop();
+        int flag=1;
+        String cust_ord[] = ord.split(",");
+        String val_str=null;
+        for(int k=0;k<cust_ord.length;k++)
         {
-            int type=0;
-            if(o[0].matches(".*\\d.*")) {
-                type = Integer.parseInt(o[0]);
-            }
-            else
+            String o[]=cust_ord[k].split(":");
+            val_str=shop.validateOrder(ord,cust_ord[k],menu);
+            if(val_str!=null)
             {
-                Set se=menu.entrySet();
-                i=se.iterator();
-                while(i.hasNext())
-                {
-                    Map.Entry me=(Map.Entry) i.next();
-                    if(me.getValue().equals(o[0]))
-                    {
-                        type=(Integer)me.getKey();
+                ord=ord.replace(ord,val_str);
+            }
+            else {
+                return false;
+            }
+        }
+            String val_ord[]=ord.split(",");
+            for (int k = 0; k < val_ord.length; k++) {
+            String o[] = val_ord[k].split(":");
+                if (shop.checkOrder((String) o[0], (String) o[1], order, menu)) {
+                    int type = 0;
+                    if (o[0].matches(".*\\d.*")) {
+                        type = Integer.parseInt(o[0]);
+                    } else {
+                        Set se = menu.entrySet();
+                        i = se.iterator();
+                        while (i.hasNext()) {
+                            Map.Entry me = (Map.Entry) i.next();
+                            if (me.getValue().equals(o[0])) {
+                                type = (Integer) me.getKey();
+                            }
+                        }
                     }
+                    int quant = Integer.parseInt(o[1]);
+                    order.put(type, quant);
                 }
             }
-            int quant=Integer.parseInt(o[1]);
-            order.put(type,quant);
+           return true;
         }
-
-    }
-
     public boolean checkOrder(String s, String s1, LinkedHashMap<Integer, Integer> order, LinkedHashMap<Integer, String> menu) {
         int type=0;
         if(s.matches(".*\\d.*")) {
@@ -200,7 +198,8 @@ public class CoffeeShop {
        int count[]={0,0,0,0,0};
        int c=0;
        String str;
-
+       int co=0;
+       int j;
        int key=1;
        String str2=null;
        Set se=menu.entrySet();
@@ -229,8 +228,6 @@ public class CoffeeShop {
                c++;
            }
        }
-       int co=0;
-       int j;
        for(j=0;j<5;j++)
        {
            if(count[j]==0)
